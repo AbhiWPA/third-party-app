@@ -65,7 +65,7 @@ class NotificationService {
       notificationDetails,
       payload: payload,
     );
-    print("📩 Notification shown: $notification.title, $notification.body");
+    print("📩 Notification shown: ${notification.title}, ${notification.body}");
   }
 
   static void _navigateToPaymentScreen(String nic, String amount, String tranRef) {

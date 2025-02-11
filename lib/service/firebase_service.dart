@@ -20,6 +20,11 @@ class FirebaseService {
     String? token = await _messaging.getToken();
     if (token != null) {
       print("FCM Token: $token");
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString('fcm_token', token);
+
+      // Optionally, share the token with your backend
+      print('FCM token saved locally');
     } else {
       print("Failed to get FCM token");
     }

@@ -19,6 +19,9 @@ void main() async {
   FirebaseService firebaseService = FirebaseService();
   NotificationService notificationService = NotificationService();
 
+  firebaseService.initializeFirebase();
+  firebaseService.getFCMToken();
+
   // Set up background message handler
   await firebaseService.setupBackgroundMessageHandler();
 
@@ -31,7 +34,7 @@ void main() async {
 class DLBApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    LocalNotifications.init(context);
+    // LocalNotifications.init(context);
     return MaterialApp(
       navigatorKey: navigatorKey,
       debugShowCheckedModeBanner: false,
