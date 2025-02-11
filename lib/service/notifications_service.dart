@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 
 import '../main.dart';
 import '../presentation/payment_screen.dart';
-import '../screens/payment_screen.dart';
 
 class NotificationService {
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =

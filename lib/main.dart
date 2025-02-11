@@ -1,13 +1,10 @@
 import 'package:dlbsweep/presentation/welcome_screen.dart';
-import 'package:dlbsweep/push/local_notifications.dart';
-import 'package:dlbsweep/screens/grid_view_page.dart';
 import 'package:dlbsweep/service/firebase_service.dart';
 import 'package:dlbsweep/service/notifications_service.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import '../screens/payment_screen.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 

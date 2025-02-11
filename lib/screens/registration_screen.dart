@@ -1,6 +1,4 @@
 import 'dart:convert';
-
-import 'package:dlbsweep/screens/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:dlbsweep/beans/register_bean.dart';
 import 'package:http/http.dart' as http;

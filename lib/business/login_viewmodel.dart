@@ -1,6 +1,5 @@
 import 'package:dlbsweep/presentation/merchant_screen.dart';
 import 'package:flutter/material.dart';
-import '../screens/grid_view_page.dart';
 import '../service/auth_service.dart';
 
 class LoginViewModel with ChangeNotifier {
