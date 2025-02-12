@@ -1,12 +1,13 @@
 import 'dart:convert';
+import 'package:dlbsweep/models/login_model.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../beans/login_bean.dart';
 
 class AuthService {
   // Login API call
-  Future<void> login(String nic, String password) async {
-    LoginReqBean loginReqBean = LoginReqBean(nic: nic, password: password);
+  Future<void> login(LoginModel loginModel) async {
+    LoginReqBean loginReqBean = LoginReqBean(nic: loginModel.nic, password: loginModel.password);
 
     try {
       final response = await http.post(
