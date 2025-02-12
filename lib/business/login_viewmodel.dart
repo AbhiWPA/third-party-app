@@ -1,3 +1,4 @@
+import 'package:dlbsweep/models/login_model.dart';
 import 'package:dlbsweep/presentation/merchant_screen.dart';
 import 'package:flutter/material.dart';
 import '../service/auth_service.dart';
@@ -13,7 +14,9 @@ class LoginViewModel with ChangeNotifier {
     _isLoading = true;
     notifyListeners();
 
-    await _authService.login(nic, password);
+    LoginModel loginModel = LoginModel(nic: nic, password: password);
+
+    await _authService.login(loginModel);
 
     _isLoading = false;
     notifyListeners();

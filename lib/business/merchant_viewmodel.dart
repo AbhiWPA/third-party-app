@@ -1,3 +1,4 @@
+import 'package:dlbsweep/models/merchant_model.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../service/merchant_service.dart';
@@ -14,7 +15,8 @@ class MerchantViewmodel with ChangeNotifier {
     notifyListeners();
 
     try {
-      final response = await _merchantService.checkUser(nic, pushId, token);
+      MerchantModel merchantModel = MerchantModel(nicNumber: nic, pushId: pushId);
+      final response = await _merchantService.checkUser(merchantModel, token);
 
       if ((response['status'] == '0011' || response['status'] == '0010') && response['content'] != null) {
         final String redirectUrl = response['content']['url'];

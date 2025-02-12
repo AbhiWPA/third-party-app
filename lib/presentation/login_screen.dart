@@ -1,8 +1,8 @@
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:dlbsweep/presentation/registration_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../business/login_viewmodel.dart';
-import '../screens/registration_screen.dart';
 import 'welcome_screen.dart';
 
 class LoginScreen extends StatelessWidget {
