@@ -26,8 +26,10 @@ class AuthService {
           print('Login successful!');
 
           final String accessToken = responseData['content']['access_token'];
+          final String accName = responseData['content']['name'];
           final prefs = await SharedPreferences.getInstance();
           await prefs.setString('access_token', accessToken);
+          await prefs.setString('username', accName);
         } else {
           print('Invalid response structure or status: ${responseData['message']}');
         }

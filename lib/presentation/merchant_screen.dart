@@ -8,9 +8,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class MerchantScreen extends StatelessWidget {
-  final String nic;
-
-  MerchantScreen({Key? key, required this.nic}) : super(key: key);
+  MerchantScreen({Key? key}) : super(key: key);
 
   void _navigateToLogin(BuildContext context) {
     Navigator.pushAndRemoveUntil(
@@ -20,19 +18,56 @@ class MerchantScreen extends StatelessWidget {
     );
   }
 
+  Future<void> _logout(BuildContext context) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('access_token');
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (context) => LoginScreen()),
+          (route) => false,
+    );
+  }
+
+  Future<String?> _setAccountName() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('username'); // Returns the username or null
+  }
+
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (_) => MerchantViewmodel(),
       child: Scaffold(
         appBar: AppBar(
-          title: Text('Registered Merchants', style: TextStyle(color: Colors.white)),
+          title: FutureBuilder<String?>(
+            future: _setAccountName(), // Call the async function
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                // Show a loading indicator while fetching the username
+                return Text('Loading...', style: TextStyle(color: Colors.black));
+              } else if (snapshot.hasError) {
+                // Handle errors
+                return Text('Error: ${snapshot.error}', style: TextStyle(color: Colors.black));
+              } else if (snapshot.hasData && snapshot.data != null) {
+                // Display the username if available
+                return Text(snapshot.data!, style: TextStyle(color: Colors.black));
+              } else {
+                // Fallback if no username is found
+                return Text('Guest', style: TextStyle(color: Colors.black));
+              }
+            },
+          ),
           centerTitle: true,
           backgroundColor: Colors.white,
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
             onPressed: () => _navigateToLogin(context),
           ),
+          actions: [
+            IconButton(
+                onPressed: () => _logout(context),
+                icon: const Icon(Icons.logout_rounded))
+          ],
         ),
         body: Consumer<MerchantViewmodel>(
           builder: (context, viewModel, child) {
@@ -258,7 +293,7 @@ class MerchantScreen extends StatelessWidget {
         }
 
         if (id == 5) {
-          await viewModel.handleSpecialMerchant(nic, pushId!, token, context);
+          await viewModel.handleSpecialMerchant(pushId!, token, context);
         } else {
           final uri = Uri.parse(url);
           if (await canLaunchUrl(uri)) {
