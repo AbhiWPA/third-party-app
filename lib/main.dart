@@ -1,3 +1,5 @@
+import 'package:dlbsweep/presentation/login_screen.dart';
+import 'package:dlbsweep/presentation/merchant_screen.dart';
 import 'package:dlbsweep/presentation/welcome_screen.dart';
 import 'package:dlbsweep/service/firebase_service.dart';
 import 'package:dlbsweep/service/notifications_service.dart';
@@ -5,6 +7,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
@@ -28,49 +31,47 @@ void main() async {
   runApp(DLBApp());
 }
 
-class DLBApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    // LocalNotifications.init(context);
-    return MaterialApp(
-      navigatorKey: navigatorKey,
-      debugShowCheckedModeBanner: false,
-      home: WelcomeScreen(),
+Future<void> checkTokenAndNavigate(BuildContext context) async {
+  final prefs = await SharedPreferences.getInstance();
+  final token = prefs.getString('access_token');
+
+  if (token != null) {
+    // Navigate to MerchantScreen if token is available
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(builder: (context) => MerchantScreen()),
     );
   }
 }
 
-// // ✅ Background Message Handler (for when the app is killed)
-// @pragma('vm:entry-point')
-// Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-//   await Firebase.initializeApp();
-//   // _handleNotification(message);
-//   if (message != null) {
-//     _showNotificationDialog(
-//       title: message.data['title'] ?? "Notification",
-//       body: message.data['body'] ?? "You opened a notification.",
-//       nic: message.data['nic'] ?? "",
-//       amount: message.data['amount'] ?? "",
-//       tranRef: message.data['tranRef'] ?? "",
-//     );
-//   }
-//   print('🔥 Background message received: ${message.messageId}');
-// }
-//
-// void _showNotificationDialog({required title, required body, required nic, required amount, required tranRef}) {
-//   LocalNotifications.showNotification(title: title, body: body, nic: nic, amount: amount, tranRef: tranRef);
-// }
-//
-// Future<void> requestPermissions() async {
-//   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-//   FlutterLocalNotificationsPlugin();
-//
-//   flutterLocalNotificationsPlugin
-//       .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
-//       ?.requestPermission();
-// }
-//
-// extension on AndroidFlutterLocalNotificationsPlugin? {
-//   void requestPermission() {}
-// }
+class DLBApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      navigatorKey: navigatorKey,
+      debugShowCheckedModeBanner: false,
+      home: FutureBuilder(
+        future: SharedPreferences.getInstance(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            final prefs = snapshot.data as SharedPreferences;
+            final token = prefs.getString('access_token');
 
+            // Navigate to MerchantScreen if token is available
+            if (token != null) {
+              return MerchantScreen();
+            } else {
+              return WelcomeScreen();
+            }
+          } else {
+            // Show a loading indicator while checking for the token
+            return Scaffold(
+              body: Center(
+                child: CircularProgressIndicator(),
+              ),
+            );
+          }
+        },
+      ),
+    );
+  }
+}

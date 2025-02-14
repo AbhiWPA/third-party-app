@@ -26,7 +26,7 @@ class LoginViewModel with ChangeNotifier {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) => MerchantScreen(nic: nic),
+          builder: (context) => MerchantScreen(),
         ),
       );
     }

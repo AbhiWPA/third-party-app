@@ -10,12 +10,12 @@ class MerchantViewmodel with ChangeNotifier {
   bool get isLoading => _isLoading;
 
   // Handle special merchant interaction
-  Future<void> handleSpecialMerchant(String nic, String pushId, String token, BuildContext context) async {
+  Future<void> handleSpecialMerchant(String pushId, String token, BuildContext context) async {
     _isLoading = true;
     notifyListeners();
 
     try {
-      MerchantModel merchantModel = MerchantModel(nicNumber: nic, pushId: pushId);
+      MerchantModel merchantModel = MerchantModel(pushId: pushId);
       final response = await _merchantService.checkUser(merchantModel, token);
 
       if ((response['status'] == '0011' || response['status'] == '0010') && response['content'] != null) {
