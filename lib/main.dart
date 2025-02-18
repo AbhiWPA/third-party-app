@@ -23,6 +23,8 @@ void main() async {
   FirebaseService firebaseService = FirebaseService();
   NotificationService notificationService = NotificationService();
 
+  firebaseService.requestPermissions();
+
   firebaseService.initializeFirebase();
   firebaseService.getFCMToken();
 
@@ -62,7 +64,7 @@ class DLBApp extends StatelessWidget {
 
             // 🚀 Navigate Based on Token
             if (token != null && token.isNotEmpty) {
-              if (notification != null) {
+              if (notification != null && notification.isNotEmpty) {
                 final Map<String, dynamic> notificationMap =
                 jsonDecode(notification);
                 print("=========== notificationMap | ${notificationMap} ======================");

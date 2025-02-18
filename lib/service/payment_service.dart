@@ -7,7 +7,7 @@ class PaymentService {
   Future<Map<String, dynamic>> fetchAccounts(String nic) async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('access_token');
-    prefs.remove("notification");
+    prefs.setString("notification", "");
 
     final response = await http.post(
       Uri.parse('https://epictechdev.com:50422/api/third-party/user/account-details'),

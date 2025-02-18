@@ -18,10 +18,23 @@ class MerchantViewmodel with ChangeNotifier {
       MerchantModel merchantModel = MerchantModel(pushId: pushId);
       final response = await _merchantService.checkUser(merchantModel, token);
 
-      if ((response['status'] == '0011' || response['status'] == '0010') && response['content'] != null) {
+      if ((response['status'] == '0000' || response['status'] == '0004' || response['status'] == '0003') && response['content'] != null) {
         final String redirectUrl = response['content']['url'];
         _launchUrl(redirectUrl, context);
       } else {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text('Cannot launch!'),
+            content: Text(response['message']),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text('OK'),
+              ),
+            ],
+          ),
+        );
         print('Invalid response or status: ${response['message']}');
       }
     } catch (e) {
@@ -41,4 +54,5 @@ class MerchantViewmodel with ChangeNotifier {
       print('Could not launch $url');
     }
   }
+
 }

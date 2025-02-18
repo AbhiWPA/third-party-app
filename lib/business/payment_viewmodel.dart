@@ -59,7 +59,7 @@ class PaymentViewModel with ChangeNotifier {
           context: context,
           builder: (context) => AlertDialog(
             title: Text('Payment Failed'),
-            content: Text('Payment processing failed. Please try again.'),
+            content: Text(response['message']),
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context),
