@@ -1,5 +1,9 @@
+import 'dart:convert';
+
+import 'package:dlbsweep/models/notification_model.dart';
 import 'package:dlbsweep/presentation/login_screen.dart';
 import 'package:dlbsweep/presentation/merchant_screen.dart';
+import 'package:dlbsweep/presentation/payment_screen.dart';
 import 'package:dlbsweep/presentation/welcome_screen.dart';
 import 'package:dlbsweep/service/firebase_service.dart';
 import 'package:dlbsweep/service/notifications_service.dart';
@@ -28,19 +32,10 @@ void main() async {
   // Initialize Notifications
   await notificationService.initialize();
 
+  // Set up notification listeners
+  notificationService.setupNotificationListeners();
+
   runApp(DLBApp());
-}
-
-Future<void> checkTokenAndNavigate(BuildContext context) async {
-  final prefs = await SharedPreferences.getInstance();
-  final token = prefs.getString('access_token');
-
-  if (token != null) {
-    // Navigate to MerchantScreen if token is available
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(builder: (context) => MerchantScreen()),
-    );
-  }
 }
 
 class DLBApp extends StatelessWidget {
@@ -50,24 +45,45 @@ class DLBApp extends StatelessWidget {
       navigatorKey: navigatorKey,
       debugShowCheckedModeBanner: false,
       home: FutureBuilder(
-        future: SharedPreferences.getInstance(),
+        future: Future.wait([
+          SharedPreferences.getInstance(),
+          FirebaseMessaging.instance.getInitialMessage(), // Handle initial notification
+        ]),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
-            final prefs = snapshot.data as SharedPreferences;
+            final prefs = snapshot.data![0] as SharedPreferences;
+            // final RemoteMessage? initialMessage = snapshot.data![1] as RemoteMessage?;
+            // final prefs = await SharedPreferences.getInstance();
             final token = prefs.getString('access_token');
+            final notification = prefs.getString('notification');
 
-            // Navigate to MerchantScreen if token is available
-            if (token != null) {
+            print("notification =================== $notification");
+            print("App killed Initial process =========== $token");
+
+            // 🚀 Navigate Based on Token
+            if (token != null && token.isNotEmpty) {
+              if (notification != null) {
+                final Map<String, dynamic> notificationMap =
+                jsonDecode(notification);
+                print("=========== notificationMap | ${notificationMap} ======================");
+                var notificationModel = NotificationModel.fromMap(notificationMap);
+                print("=========== notificationModel | ${notificationModel} ======================");
+
+                if (notificationModel != null) {
+                  return PaymentScreen(
+                    nic: notificationModel.nic,
+                    amount: notificationModel.amount,
+                    tranRef: notificationModel.tranRef,
+                  );
+                }
+              }
               return MerchantScreen();
             } else {
               return WelcomeScreen();
             }
           } else {
-            // Show a loading indicator while checking for the token
-            return Scaffold(
-              body: Center(
-                child: CircularProgressIndicator(),
-              ),
+            return const Scaffold(
+              body: Center(child: CircularProgressIndicator()),
             );
           }
         },

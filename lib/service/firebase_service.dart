@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:dlbsweep/business/notification_viewmodel.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -61,6 +63,9 @@ class FirebaseService {
     NotificationViewModel notificationViewModel = NotificationViewModel();
     if (message.data.isNotEmpty) {
       NotificationModel notification = NotificationModel.fromMap(message.data);
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString('notification', jsonEncode(notification.toMap()));
+
       notificationViewModel.showNotification(notification);
       print('🔥 Background message received: ${message.messageId}');
       print('Title: ${message.data['title']}');

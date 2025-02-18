@@ -1,5 +1,4 @@
 import 'package:dlbsweep/models/notification_model.dart';
-import 'package:flutter/material.dart';
 
 import '../service/api_service.dart';
 import '../service/notifications_service.dart';

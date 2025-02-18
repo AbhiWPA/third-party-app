@@ -22,4 +22,14 @@ class NotificationModel {
       tranRef: data['tranRef'] ?? '',
     );
   }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'title': title,
+      'body': body,
+      'nic': nic,
+      'amount': amount,
+      'tranRef': tranRef,
+    };
+  }
 }

@@ -15,18 +15,26 @@ class LoginViewModel with ChangeNotifier {
     notifyListeners();
 
     LoginModel loginModel = LoginModel(nic: nic, password: password);
-
-    await _authService.login(loginModel);
+    bool? loginResponse;
+    if ((loginModel.nic.isNotEmpty && loginModel.password.isNotEmpty)) {
+      loginResponse = await _authService.login(loginModel);
+    }
 
     _isLoading = false;
     notifyListeners();
 
     // Navigate to GridViewPage on successful login
-    if (!_isLoading) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => MerchantScreen(),
+
+    if (loginResponse == true) {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => MerchantScreen()),
+      );
+    } else {
+      // Show an error message if login fails
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Login failed. Please check your credentials.'),
+          backgroundColor: Colors.red,
         ),
       );
     }
